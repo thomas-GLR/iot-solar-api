@@ -52,12 +52,12 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-      #- name: Deploy the new image
-      #  uses: appleboy/ssh-action@master
-      #  with:
-      #    host: ${{ secrets.HOST }}
-      #    username: ${{ secrets.USERNAME }}
-      #    key: ${{ secrets.KEY }}
-      #    script: |
-      #      cd ~/stacks
-      #      docker stack deploy -c iot-solar-api.yml iot-solar-api --with-registry-auth
+      - name: Deploy the new image
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          script: |
+            cd ~/stacks
+            docker stack deploy -c iot-solar-api.yml iot-solar-api --with-registry-auth
