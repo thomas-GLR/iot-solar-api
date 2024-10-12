@@ -24,6 +24,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         entities: [Temperature, ReadingDevice],
         synchronize: true,
         logging: true,
+        connectTimeout: 30000,
+        extra: {
+          connectionLimit: 5,
+        },
       }),
       inject: [ConfigService],
     }),
