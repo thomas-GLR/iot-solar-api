@@ -62,20 +62,8 @@ jobs:
             # Se connecter au registre
             echo "${{ secrets.TOKEN_GITHUB }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
             
-            # # Naviguer vers le répertoire du stack
-            # cd ~/stacks
-            # 
-            # # Déployer le stack
-            # docker stack deploy -c iot-solar-api.yml iot-solar-api --with-registry-auth
-            
-            # Naviguer vers le répertoire où se trouve iot-solar-api.yml
+            # Naviguer vers le répertoire du stack
             cd ~/stacks
-
-            # Télécharger la dernière version de l'image depuis le registre
-            docker-compose pull
-
-            # Arrêter et supprimer les anciens conteneurs
-            docker-compose down
-
-            # Démarrer les nouveaux conteneurs avec la nouvelle image
-            docker-compose up -d
+            
+            # Déployer le stack
+            docker stack deploy -c iot-solar-api.yml iot-solar-api --with-registry-auth
