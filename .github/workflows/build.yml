@@ -62,8 +62,20 @@ jobs:
             # Se connecter au registre
             echo "${{ secrets.TOKEN_GITHUB }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
             
-            # Naviguer vers le répertoire du stack
-            cd ~/stacks
+            # # Naviguer vers le répertoire du stack
+            # cd ~/stacks
+            # 
+            # # Déployer le stack
+            # docker stack deploy -c iot-solar-api.yml iot-solar-api --with-registry-auth
             
-            # Déployer le stack
-            docker stack deploy -c iot-solar-api.yml iot-solar-api --with-registry-auth
+            Tirer la nouvelle image depuis le registre
+            docker pull ghcr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+            # Démarrer un nouveau conteneur Docker avec l'image mise à jour
+            docker run -d --name iot-solar-api \
+              -e NODE_ENV=production \
+              -p 3000:3000 \
+              ghcr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+            # Redémarrer Nginx pour prendre en compte les modifications (facultatif si Nginx déjà configuré)
+            sudo systemctl restart nginx
