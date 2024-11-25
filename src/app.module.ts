@@ -5,6 +5,8 @@ import { ReadingDevicesModule } from './reading-devices/reading-devices.module';
 import { Temperature } from './temperatures/temperature.entity';
 import { ReadingDevice } from './reading-devices/reading-device.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { AppService } from './app.service';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -47,6 +49,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     TemperaturesModule,
     ReadingDevicesModule,
   ],
+  providers: [AppService],
+  controllers: [AppController],
 })
 export class AppModule {
   constructor() {}
