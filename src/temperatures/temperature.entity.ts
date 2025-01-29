@@ -1,6 +1,5 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { ReadingDevice } from '../reading-devices/reading-device.entity';
-import { TemperatureDto } from './temperature.dto';
 
 @Entity()
 export class Temperature {

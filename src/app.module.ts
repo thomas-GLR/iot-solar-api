@@ -7,6 +7,8 @@ import { ReadingDevice } from './reading-devices/reading-device.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppService } from './app.service';
 import { AppController } from './app.controller';
+import { ResistanceStateModule } from './resistance-state/resistance-state.module';
+import { ResistanceState } from './resistance-state/resistance-state.entity';
 
 @Module({
   imports: [
@@ -23,7 +25,7 @@ import { AppController } from './app.controller';
         username: configService.get<string>('DATABASE_USERNAME'),
         password: configService.get<string>('DATABASE_PASSWORD'),
         database: configService.get<string>('DATABASE_NAME'),
-        entities: [Temperature, ReadingDevice],
+        entities: [Temperature, ReadingDevice, ResistanceState],
         synchronize: true,
         logging: true,
         connectTimeout: 30000,
@@ -48,6 +50,7 @@ import { AppController } from './app.controller';
     // }),
     TemperaturesModule,
     ReadingDevicesModule,
+    ResistanceStateModule,
   ],
   providers: [AppService],
   controllers: [AppController],
