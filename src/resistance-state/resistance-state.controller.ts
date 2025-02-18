@@ -4,11 +4,13 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  NotFoundException,
   Post,
 } from '@nestjs/common';
 import { ResistanceStateDto } from './resistance-state.dto';
 import { ResistanceStateService } from './resistance-state.service';
 import { ResistanceState } from './resistance-state.entity';
+import now = jest.now;
 
 @Controller('resistance')
 export class ResistanceStateController {
@@ -18,8 +20,17 @@ export class ResistanceStateController {
 
   @Get()
   async getLastResistanceState(): Promise<ResistanceStateDto> {
-    const resistanceState =
+    const resistancesStates =
       await this.resistanceStateService.getLastResistanceState();
+
+    if (resistancesStates.length === 0) {
+      return {
+        id: null,
+        lastUpdate: new Date(),
+        currentState: false,
+      };
+    }
+    const resistanceState = resistancesStates[0];
 
     return <ResistanceStateDto>{
       id: resistanceState.id,
@@ -35,10 +46,10 @@ export class ResistanceStateController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() resistanceStateDto: ResistanceStateDto) {
+  async create(@Body() resistanceState: ResistanceState) {
     const resistanceStatePartial: Partial<ResistanceState> = {
       lastUpdate: new Date(),
-      currentState: resistanceStateDto.currentState,
+      currentState: resistanceState.currentState,
     };
 
     return await this.resistanceStateService.createResitanceState(

@@ -10,8 +10,8 @@ export class ResistanceStateService {
     private resistanceRepository: Repository<ResistanceState>,
   ) {}
 
-  getLastResistanceState(): Promise<ResistanceState> {
-    return this.resistanceRepository.findOne({
+  getLastResistanceState(): Promise<ResistanceState[]> {
+    return this.resistanceRepository.find({
       order: { lastUpdate: 'DESC' },
     });
   }
