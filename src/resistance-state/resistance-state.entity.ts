@@ -4,7 +4,7 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 export class ResistanceState {
   @PrimaryGeneratedColumn()
   id: number;
-  @Column()
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   lastUpdate: Date;
   // True : allumé
   // False : éteinte

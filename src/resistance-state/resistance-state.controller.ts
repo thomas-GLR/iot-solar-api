@@ -4,13 +4,11 @@ import {
   Get,
   HttpCode,
   HttpStatus,
-  NotFoundException,
   Post,
 } from '@nestjs/common';
 import { ResistanceStateDto } from './resistance-state.dto';
 import { ResistanceStateService } from './resistance-state.service';
 import { ResistanceState } from './resistance-state.entity';
-import now = jest.now;
 
 @Controller('resistance')
 export class ResistanceStateController {
@@ -34,7 +32,10 @@ export class ResistanceStateController {
 
     return <ResistanceStateDto>{
       id: resistanceState.id,
-      lastUpdate: resistanceState.lastUpdate,
+      lastUpdate: new Date(
+        resistanceState.lastUpdate.getTime() -
+          resistanceState.lastUpdate.getTimezoneOffset() * 60000,
+      ),
       currentState: resistanceState.currentState,
     };
   }
