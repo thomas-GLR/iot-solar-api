@@ -9,11 +9,13 @@ import {
 import { ResistanceStateDto } from './resistance-state.dto';
 import { ResistanceStateService } from './resistance-state.service';
 import { ResistanceState } from './resistance-state.entity';
+import { DateService } from '../utils/date.service';
 
 @Controller('resistance')
 export class ResistanceStateController {
   constructor(
     private readonly resistanceStateService: ResistanceStateService,
+    private readonly dateservice: DateService,
   ) {}
 
   @Get()
@@ -24,7 +26,7 @@ export class ResistanceStateController {
     if (resistancesStates.length === 0) {
       return {
         id: null,
-        lastUpdate: new Date(),
+        lastUpdate: this.dateservice.dateToUtc(new Date()),
         currentState: false,
       };
     }
@@ -32,10 +34,7 @@ export class ResistanceStateController {
 
     return <ResistanceStateDto>{
       id: resistanceState.id,
-      lastUpdate: new Date(
-        resistanceState.lastUpdate.getTime() -
-          resistanceState.lastUpdate.getTimezoneOffset() * 60000,
-      ),
+      lastUpdate: resistanceState.lastUpdate,
       currentState: resistanceState.currentState,
     };
   }
@@ -49,7 +48,7 @@ export class ResistanceStateController {
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() resistanceState: ResistanceState) {
     const resistanceStatePartial: Partial<ResistanceState> = {
-      lastUpdate: new Date(),
+      lastUpdate: this.dateservice.dateToUtc(new Date()),
       currentState: resistanceState.currentState,
     };
 
