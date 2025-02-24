@@ -9,6 +9,9 @@ import { AppService } from './app.service';
 import { AppController } from './app.controller';
 import { ResistanceStateModule } from './resistance-state/resistance-state.module';
 import { ResistanceState } from './resistance-state/resistance-state.entity';
+import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
+import { Users } from './users/users.entity';
 
 @Module({
   imports: [
@@ -25,7 +28,7 @@ import { ResistanceState } from './resistance-state/resistance-state.entity';
         username: configService.get<string>('DATABASE_USERNAME'),
         password: configService.get<string>('DATABASE_PASSWORD'),
         database: configService.get<string>('DATABASE_NAME'),
-        entities: [Temperature, ReadingDevice, ResistanceState],
+        entities: [Temperature, ReadingDevice, ResistanceState, Users],
         synchronize: false,
         timezone: 'Z',
         logging: true,
@@ -53,6 +56,8 @@ import { ResistanceState } from './resistance-state/resistance-state.entity';
     TemperaturesModule,
     ReadingDevicesModule,
     ResistanceStateModule,
+    UsersModule,
+    AuthModule,
   ],
   providers: [AppService],
   controllers: [AppController],

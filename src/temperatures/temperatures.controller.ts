@@ -1,4 +1,12 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Logger, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Logger,
+  Post,
+} from '@nestjs/common';
 import { TemperatureDto } from './temperature.dto';
 import { TemperaturesService } from './temperatures.service';
 import { ReadingDevicesService } from '../reading-devices/reading-devices.service';
@@ -33,6 +41,7 @@ export class TemperaturesController {
   }
 
   @Post()
+  // @UseGuards(LocalNetworkGuard)
   @HttpCode(HttpStatus.CREATED)
   create(@Body() createTemperatureDto: CreateTemperatureDto) {
     this.temperaturesService.createTemperature(createTemperatureDto);
