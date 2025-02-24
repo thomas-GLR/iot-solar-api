@@ -13,7 +13,7 @@ export class AuthService {
   async signIn(
     username: string,
     pass: string,
-  ): Promise<{ access_token: string }> {
+  ): Promise<{ accessToken: string, refreshToken: string }> {
     const user = await this.usersService.findByUsername(username);
 
     const passwordValid = await bcrypt.compare(pass, user?.password);
@@ -21,28 +21,38 @@ export class AuthService {
     if (!passwordValid) {
       throw new UnauthorizedException();
     }
-    const payload = { sub: user.id, username: user.username };
-    return {
-      access_token: await this.jwtService.signAsync(payload),
-    };
+
+    return this.login(user)
   }
 
-  async validateUser(username: string, password: string): Promise<any> {
-    const user = await this.usersService.findByUsername(username);
-    if (!user) return null;
-    const passwordValid = await bcrypt.compare(password, user.password);
-    if (!user) {
-      throw new NotAcceptableException('could not find the user');
-    }
-    if (user && passwordValid) {
-      return user;
-    }
-    return null;
-  }
-  async login(user: any) {
+  async login(user: any): Promise<{ accessToken: string, refreshToken: string }> {
     const payload = { username: user.username, sub: user._id };
-    return {
-      access_token: this.jwtService.sign(payload),
-    };
+
+    const accessToken = this.jwtService.sign(payload, { expiresIn: '10m' });
+    const refreshToken = this.jwtService.sign(payload, { expiresIn: '7d' });
+
+    const saltOrRounds = 10;
+    const hashedRefreshToken = await bcrypt.hash(refreshToken, saltOrRounds);
+
+    await this.usersService.updateRefreshToken(user.id, hashedRefreshToken);
+
+    return { accessToken, refreshToken };
+  }
+
+  async refreshToken(refreshToken: string) {
+    try {
+      const decoded = this.jwtService.verify(refreshToken);
+      const user = await this.usersService.findById(decoded.sub);
+
+      const isRefreshTokenValid = await bcrypt.compare(refreshToken, user?.refreshToken);
+
+      if (!user || !isRefreshTokenValid) {
+        throw new UnauthorizedException('Invalid refresh token');
+      }
+
+      return this.login(user);
+    } catch (error) {
+      throw new UnauthorizedException('Invalid or expired refresh token');
+    }
   }
 }

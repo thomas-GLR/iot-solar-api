@@ -5,8 +5,9 @@ import { PassportModule } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { AuthGuard } from './AuthGuard';
+import { AuthGuardStrategy } from './auth-guard.strategy';
 import { APP_GUARD } from '@nestjs/core';
+import { RefreshTokenStrategy } from './refresh-token.strategy';
 
 @Module({
   imports: [
@@ -26,9 +27,10 @@ import { APP_GUARD } from '@nestjs/core';
   providers: [
     {
       provide: APP_GUARD,
-      useClass: AuthGuard,
+      useClass: AuthGuardStrategy,
     },
     AuthService,
+    RefreshTokenStrategy,
   ], // UsersService, LocalStrategy],
   controllers: [AuthController],
   exports: [AuthService],
