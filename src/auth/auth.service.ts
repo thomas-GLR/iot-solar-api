@@ -1,4 +1,4 @@
-import { Injectable, NotAcceptableException, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
@@ -13,8 +13,12 @@ export class AuthService {
   async signIn(
     username: string,
     pass: string,
-  ): Promise<{ accessToken: string, refreshToken: string }> {
+  ): Promise<{ accessToken: string; refreshToken: string }> {
     const user = await this.usersService.findByUsername(username);
+
+    if (!user) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
 
     const passwordValid = await bcrypt.compare(pass, user?.password);
 
@@ -22,10 +26,12 @@ export class AuthService {
       throw new UnauthorizedException();
     }
 
-    return this.login(user)
+    return this.login(user);
   }
 
-  async login(user: any): Promise<{ accessToken: string, refreshToken: string }> {
+  async login(
+    user: any,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
     const payload = { username: user.username, sub: user._id };
 
     const accessToken = this.jwtService.sign(payload, { expiresIn: '10m' });
@@ -44,15 +50,20 @@ export class AuthService {
       const decoded = this.jwtService.verify(refreshToken);
       const user = await this.usersService.findById(decoded.sub);
 
-      const isRefreshTokenValid = await bcrypt.compare(refreshToken, user?.refreshToken);
+      const isRefreshTokenValid = await bcrypt.compare(
+        refreshToken,
+        user?.refreshToken,
+      );
 
       if (!user || !isRefreshTokenValid) {
-        throw new UnauthorizedException('Invalid refresh token');
+        throw new UnauthorizedException('Token de rafraichissement invalide');
       }
 
       return this.login(user);
     } catch (error) {
-      throw new UnauthorizedException('Invalid or expired refresh token');
+      throw new UnauthorizedException(
+        `Le token de rafraichissement est invalide ou a expiré, Message d'erreur : ${error.message}`,
+      );
     }
   }
 }
