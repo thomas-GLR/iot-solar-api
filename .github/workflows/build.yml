@@ -58,6 +58,7 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE }}
           script: |
             # Se connecter au registre
             echo "${{ secrets.TOKEN_GITHUB }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
