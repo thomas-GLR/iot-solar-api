@@ -38,7 +38,7 @@ export class ResistanceStateService {
 
     try {
       return await axios.get(
-        `http://${esp32IpAddress}:${esp32Port}/${parameter}`,
+        `http://${esp32IpAddress}:${esp32Port}/resistance/${parameter}`,
       );
     } catch (error) {
       throw error;
