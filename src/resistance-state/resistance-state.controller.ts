@@ -3,7 +3,7 @@ import {
   Controller,
   Get,
   HttpCode,
-  HttpStatus,
+  HttpStatus, InternalServerErrorException,
   Post,
 } from '@nestjs/common';
 import { ResistanceStateDto } from './resistance-state.dto';
@@ -52,8 +52,20 @@ export class ResistanceStateController {
       currentState: resistanceState.currentState,
     };
 
-    return await this.resistanceStateService.createResitanceState(
-      resistanceStatePartial,
+    const response = await this.resistanceStateService.sendRequestToEsp32(
+      resistanceState.currentState,
+    );
+
+    console.log(response);
+
+    if (response.status == 200) {
+      return await this.resistanceStateService.createResitanceState(
+        resistanceStatePartial,
+      );
+    }
+
+    throw new InternalServerErrorException(
+      `Une erreur est survenue lors de la communication avec l'ESP32 : [${response.status}] ${response.data}`,
     );
   }
 }
