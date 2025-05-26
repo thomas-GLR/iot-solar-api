@@ -3,7 +3,8 @@ import {
   Controller,
   Get,
   HttpCode,
-  HttpStatus, InternalServerErrorException,
+  HttpStatus,
+  InternalServerErrorException,
   Post,
 } from '@nestjs/common';
 import { ResistanceStateDto } from './resistance-state.dto';

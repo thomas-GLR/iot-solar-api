@@ -1,6 +1,6 @@
 export interface TemperatureDto {
   id: number;
   value: number;
-  collectionDate: Date;
+  collectionDate: string;
   readingDeviceName: string;
 }
