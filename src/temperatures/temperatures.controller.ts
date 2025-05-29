@@ -63,16 +63,16 @@ export class TemperaturesController {
           const minutes = temperature.collectionDate.getUTCMinutes();
 
           switch (aggregationType) {
-            case AggregationType.MINUTES:
+            case AggregationType.HOURS:
               cle = new Date(year, month, day, hours, minutes).toUTCString();
               break;
-            case AggregationType.HOURS:
+            case AggregationType.DAYS:
               cle = new Date(year, month, day, hours).toUTCString();
               break;
-            case AggregationType.DAYS:
+            case AggregationType.MONTHS:
               cle = new Date(year, month, day).toUTCString();
               break;
-            case AggregationType.MONTHS:
+            case AggregationType.YEARS:
               cle = new Date(year, month, 1).toUTCString();
               break;
           }
@@ -121,8 +121,6 @@ export class TemperaturesController {
           }
         }
 
-        console.log(temperaturesDtos);
-
         return temperaturesDtos.sort(
           (a, b) =>
             this.dateService.zonedTimeToUTC(b.collectionDate).getDate() -
@@ -157,12 +155,15 @@ export class TemperaturesController {
   async getLastTemperaturesFromReadingDevice(): Promise<TemperatureDto[]> {
     const temperatures: TemperatureDto[] = [];
     const readingDevices = await this.readingDevicesService.findAll();
-    readingDevices.forEach((readingDevice) => {
-      readingDevice.temperatures.sort(
-        (a, b) => b.collectionDateToDate() - a.collectionDateToDate(),
-      );
-      this.logger.log(readingDevice.temperatures[0]);
-      const lastTemperature = readingDevice.temperatures[0];
+
+    for (const readingDevice of readingDevices) {
+      const lastTemperature =
+        await this.temperaturesService.getLastTemperatureForADevice(
+          readingDevice,
+        );
+
+      this.logger.log(lastTemperature);
+
       temperatures.push(<TemperatureDto>{
         id: lastTemperature.id,
         value: lastTemperature.value,
@@ -171,7 +172,7 @@ export class TemperaturesController {
         ),
         readingDeviceName: readingDevice.name,
       });
-    });
+    }
 
     return temperatures;
   }
