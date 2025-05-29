@@ -12,6 +12,8 @@ import { ResistanceState } from './resistance-state/resistance-state.entity';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { Users } from './users/users.entity';
+import { ParameterModule } from './parameter/parameter.module';
+import { Parameter } from './parameter/parameter.entity';
 
 @Module({
   imports: [
@@ -28,8 +30,14 @@ import { Users } from './users/users.entity';
         username: configService.get<string>('DATABASE_USERNAME'),
         password: configService.get<string>('DATABASE_PASSWORD'),
         database: configService.get<string>('DATABASE_NAME'),
-        entities: [Temperature, ReadingDevice, ResistanceState, Users],
-        synchronize: false,
+        entities: [
+          Temperature,
+          ReadingDevice,
+          ResistanceState,
+          Users,
+          Parameter,
+        ],
+        synchronize: true,
         timezone: 'Z',
         logging: true,
         connectTimeout: 30000,
@@ -58,6 +66,7 @@ import { Users } from './users/users.entity';
     ResistanceStateModule,
     UsersModule,
     AuthModule,
+    ParameterModule,
   ],
   providers: [AppService],
   controllers: [AppController],

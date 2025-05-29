@@ -11,9 +11,11 @@ export class ReadingDevicesService {
   ) {}
 
   findAll(): Promise<ReadingDevice[]> {
-    return this.readingDevicesRepository.find({
-      relations: ['temperatures'], // Charger la relation 'temperatures'
-    });
+    // Trop couteux on va juste récuéprer chaque reading device
+    // return this.readingDevicesRepository.find({
+    //   relations: ['temperatures'], // Charger la relation 'temperatures'
+    // });
+    return this.readingDevicesRepository.find();
   }
 
   findByName(name: string): Promise<ReadingDevice | null> {

@@ -30,16 +30,17 @@ export class ResistanceStateService {
     return await this.resistanceRepository.save(resistanceState);
   }
 
-  async sendRequestToEsp32(swithOnResistance: boolean) {
-    const esp32IpAddress = process.env.ESP_IP_ADDRESS;
-    const esp32Port = process.env.ESP_PORT;
-    const esp32Protocole = process.env.ESP_PROTOCOL;
-
+  async sendRequestToEsp32(
+    espIp: string,
+    espPort: string,
+    espProtocol: string,
+    swithOnResistance: boolean,
+  ) {
     const parameter = swithOnResistance ? '1' : '0';
 
     try {
       return await axios.get(
-        `${esp32Protocole}://${esp32IpAddress}:${esp32Port}/resistance/${parameter}`,
+        `${espProtocol}://${espIp}:${espPort}/resistance/${parameter}`,
       );
     } catch (error) {
       throw error;
