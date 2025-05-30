@@ -46,4 +46,28 @@ export class TemperaturesService {
 
     return await this.temperaturesRepository.save(temperature);
   }
+
+  async getTemperaturesDetail(
+    firstDate: Date,
+    endDate: Date,
+    readingDeviceName: string,
+  ) {
+    const readingDevice =
+      await this.readingDevicesService.findByName(readingDeviceName);
+
+    return this.temperaturesRepository
+      .createQueryBuilder('temperature')
+      .where('temperature.readingDeviceId = :deviceId', {
+        deviceId: readingDevice.id,
+      })
+      .andWhere('temperature.collectionDate >= :firstDate', {
+        firstDate: firstDate,
+      })
+      .andWhere('temperature.collectionDate < :endDate', {
+        endDate: endDate,
+      })
+      .orderBy('temperature.collectionDate', 'DESC')
+      .leftJoinAndSelect('temperature.readingDevice', 'readingDevice')
+      .getMany();
+  }
 }

@@ -144,6 +144,30 @@ export class TemperaturesController {
     return temperaturesDtos;
   }
 
+  @Get('detail')
+  async getTemperaturesDetail(
+    @Query('first_date') firstDate: Date,
+    @Query('end_date') endDate: Date,
+    @Query('reading_device_name') readingDeviceName: string,
+  ) {
+    const temperatures = await this.temperaturesService.getTemperaturesDetail(
+      firstDate,
+      endDate,
+      readingDeviceName,
+    );
+
+    return temperatures.map((temperature) => {
+      return <TemperatureDto>{
+        id: temperature.id,
+        value: temperature.value,
+        collectionDate: this.dateService.UTCToZonedTime(
+          temperature.collectionDate,
+        ),
+        readingDeviceName: temperature.readingDevice.name,
+      };
+    });
+  }
+
   @Post()
   // @UseGuards(LocalNetworkGuard)
   @HttpCode(HttpStatus.CREATED)
